@@ -2,8 +2,6 @@
  *  Project: Jquery FullContent
  *  Description: Plugin which allows a full content browser navigation. Flexible and Extended.
  *  Author: Zeh Fernandes | zehfernandes.com
-
- *  This plugin needs jquery.ScrollTo http://demos.flesler.com/jquery/scrollTo/ to work.
  */
 
 ;(function ( $, window, undefined ) {
@@ -68,7 +66,8 @@
   	//Ajust the browser viewport to actual stage
   	if (window.location.hash) {
   		var hash = window.location.hash.replace(/^#\/?/,'');
-  		$.scrollTo('#' + this.options.idComplement + hash , 0 );
+      scrollTo(parseInt($('#'+this.options.idComplement + hash).css('left')),
+        parseInt($('#'+this.options.idComplement + hash).css('top')));
   	}
 
   };
@@ -87,7 +86,8 @@
 
       //Scroll To startStage
      	if((!window.location.hash) && (self.options.stageStart == index+1)) {
-  	   	$.scrollTo($(this), 0 );
+        scrollTo(parseInt($('#'+idComplement+window.location.hash.substring(1)).css('left')),
+          parseInt($('#'+idComplement+window.location.hash.substring(1)).css('top')));
   	   	window.location.hash = 	$(this).attr('id').replace(idComplement, '');
      	}
 
@@ -109,7 +109,16 @@
 
     this.$window.bind( 'hashchange', function( event ){
       var hash = window.location.hash.replace(/^#\/?/,'');
-      $.scrollTo('#'+self.options.idComplement+hash, speed );
+
+      var isFirefox = typeof InstallTrigger !== 'undefined';   
+      var isChrome = !!window.chrome && !isOpera;   
+      if (isChrome || isFirefox) {
+      $('html').animate({scrollTop: parseInt($('#'+self.options.idComplement+hash).css('top')),
+                    scrollLeft: parseInt($('#'+self.options.idComplement+hash).css('left'))}, speed);
+      } else {
+      $('body').animate({scrollTop: parseInt($('#'+self.options.idComplement+hash).css('top')),
+                    scrollLeft: parseInt($('#'+self.options.idComplement+hash).css('left'))}, speed);
+      }
     });
 
   };
